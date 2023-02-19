@@ -51,8 +51,9 @@ namespace GXPEngine
             {
                 if (col != owner)
                 {
-                    if (col.parent is Enemy)
+                    if (col.parent is Enemy && col.name != "circle.png")
                     {
+                        Console.WriteLine(col.name);
                         LateDestroy();
                     }
 

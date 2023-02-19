@@ -34,7 +34,6 @@ namespace GXPEngine
         protected virtual void Initialize(TiledObject obj)
         {
             SetOrigin(width / 2, height / 2);
-            scale = 0.8f;
 
             triggerRange = obj.GetFloatProperty("triggerRange", 200.0f);
             speed = obj.GetFloatProperty("speed", 1f);

@@ -42,6 +42,7 @@
     <Compile Include="GXPEngine\BombEnemy.cs" />
     <Compile Include="GXPEngine\Bullet.cs" />
     <Compile Include="GXPEngine\Enemy.cs" />
+    <Compile Include="GXPEngine\GameManager.cs" />
     <Compile Include="GXPEngine\GhostEnemy.cs" />
     <Compile Include="GXPEngine\HUD.cs" />
     <Compile Include="GXPEngine\Player.cs" />

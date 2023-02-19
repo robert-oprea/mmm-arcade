@@ -15,29 +15,12 @@ namespace GXPEngine
 
         Player player;
 
-        Random rnd = new Random();
-
         TiledObject exampleBombEnemy;
         TiledObject exampleSnakeEnemy;
         TiledObject exampleGhostEnemy;
-        TiledObject gameManager;
 
-        //scrolling the level
-        float baseScrollSpeed; //the scrolling speed
-        float scrollSpeedIncrease; //by how much the scrolling speed increases
-        float scrollSpeedIncreaseTimer; //how often the scrolling speed increases
-        float lastSpeedIncrease; //the last time the scrolling speed increased
-        float maxScrollSpeed; // the max speed at which the level can be scrolled
-
-        //spawning enemies
-        float enemySpawnTimer; //how often enemies spawn
-        float enemySpawnSpeedIncrease; //by how much their spawn speed increases
-        float enemySpawnSpeedIncreaseTimer; // how often their spawn speed increases
-        float lastSpawnedEnemy; //when the last enemy was spawned
-        float lastEnemySpawnSpeedIncrease; //when the last time the spawn speed increased
-        float maxEnemySpawnSpeed; //the maximum speed at which enemies can be spawned
-
-        int levelLength;
+        TiledObject gameManagerObj;
+        GameManager gameManager;
 
         public Level(string filename)
         {
@@ -102,59 +85,32 @@ namespace GXPEngine
                 {
                     case "Player": // if the objects Name is equal to Player it creates a player
                         player = new Player("cart.png", 1, 1, obj);
-                        player.x = obj.X;
-                        player.y = obj.Y;
-                        player.scale = 0.8f;
 
                         AddChild(player);
                         break;
 
                     case "ExampleBombEnemy": // if the objects Name is equal to ExampleBombEnemy it creates the template bomb enemy
-                        Enemy exampleBomb;
-                        exampleBomb = new BombEnemy(obj);
-                        exampleBomb.x = obj.X;
-                        exampleBomb.y = obj.Y;
 
                         exampleBombEnemy = obj;
 
-                        AddChild(exampleBomb);
                         break;
 
                     case "ExampleSnakeEnemy": // if the objects Name is equal to ExampleSnakeEnemy it creates the template snake enemy
-                        Enemy exampleSnake;
-                        exampleSnake = new SnakeEnemy(obj);
-                        exampleSnake.x = obj.X;
-                        exampleSnake.y = obj.Y;
 
                         exampleSnakeEnemy = obj;
 
-                        AddChild(exampleSnake);
                         break;
 
                     case "ExampleGhostEnemy": // if the objects Name is equal to ExampleGhostEnemy it creates the template ghost enemy
-                        Enemy exampleGhost;
-                        exampleGhost = new GhostEnemy(obj);
-                        exampleGhost.x = obj.X;
-                        exampleGhost.y = obj.Y;
 
                         exampleGhostEnemy = obj;
 
-                        AddChild(exampleGhost);
                         break;
 
-                    case "GameManager": //I didn't wanna make another class for it... L
-                        gameManager = obj;
-                        baseScrollSpeed = gameManager.GetFloatProperty("baseScrollSpeed", 1.0f);
-                        scrollSpeedIncrease = gameManager.GetFloatProperty("scrollSpeedIncrease", 0.1f);
-                        scrollSpeedIncreaseTimer = gameManager.GetFloatProperty("scrollSpeedIncreaseTimer", 1f) * 1000;
-                        maxScrollSpeed = gameManager.GetFloatProperty("maxScrollSpeed", 100f);
+                    case "GameManager":
 
-                        enemySpawnTimer = gameManager.GetFloatProperty("enemySpawnTimer", 1f) * 1000;
-                        enemySpawnSpeedIncrease = gameManager.GetFloatProperty("enemySpawnSpeedIncrease", 100f) * 1000;
-                        enemySpawnSpeedIncreaseTimer = gameManager.GetFloatProperty("enemySpawnSpeedIncreaseTimer", 1f) * 1000;
-                        maxEnemySpawnSpeed = gameManager.GetFloatProperty("maxEnemySpawnSpeed", 1f) * 1000;
+                        gameManagerObj = obj;
 
-                        levelLength = gameManager.GetIntProperty("levelLength", 16);
                         break;
                 }
             }
@@ -162,75 +118,11 @@ namespace GXPEngine
 
         void Update()
         {
-            SpawnEnemy();
-
-            ScrollLevel();
-        }
-
-        void ScrollLevel()
-        {
-            foreach (GameObject child in GetChildren())
+            if (player != null && gameManager == null)
             {
-                if (child is Tiles)
-                {
-                    child.x -= baseScrollSpeed;
+                gameManager = new GameManager(gameManagerObj, exampleGhostEnemy, exampleBombEnemy, exampleSnakeEnemy, player);
 
-                    if (child.x + 64 < x)
-                    {
-                        child.x += levelLength * 32;
-                    }
-                }
-
-                if (child is Enemy)
-                {
-                    child.x -= baseScrollSpeed;
-
-                    if (child.x + 64 < x)
-                    {
-                        child.LateDestroy();
-                    }
-                }
-            }
-
-            if (Time.time > lastSpeedIncrease + scrollSpeedIncreaseTimer && baseScrollSpeed < maxScrollSpeed)
-            {
-                baseScrollSpeed += scrollSpeedIncrease;
-                lastSpeedIncrease = Time.time;
-            }
-        }
-
-        void SpawnEnemy()
-        {
-            if (Time.time > lastSpawnedEnemy + enemySpawnTimer)
-            {
-                Enemy enemy;
-
-                switch (rnd.Next(1, 4))
-                {
-                    case 1: enemy = new BombEnemy(exampleBombEnemy);
-                        break;
-                    case 2: enemy = new GhostEnemy(exampleGhostEnemy);
-                        break;
-                    case 3: enemy = new SnakeEnemy(exampleSnakeEnemy);
-                        break;
-                    default: enemy = new BombEnemy(exampleBombEnemy);
-                        break;
-                }
-
-                enemy.x = 960; 
-                enemy.y = rnd.Next(48, 464);
-
-                enemy.SetTarget(player);
-
-                AddChild(enemy);
-
-                lastSpawnedEnemy = Time.time;
-
-                if (Time.time > lastEnemySpawnSpeedIncrease + enemySpawnSpeedIncreaseTimer && enemySpawnTimer > maxEnemySpawnSpeed)
-                {
-                    enemySpawnTimer -= enemySpawnSpeedIncrease;
-                    lastEnemySpawnSpeedIncrease = Time.time;
-                }
+                AddChild(gameManager);
             }
         }
     }

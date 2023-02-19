@@ -43,6 +43,9 @@ namespace GXPEngine
         {
             SetOrigin(width / 2, height / 2);
 
+            x = obj.X;
+            y = game.height / 2;
+
             playerHitBox = new Sprite("square.png");
             playerHitBox.SetOrigin(playerHitBox.width / 2, playerHitBox.height / 2 - 5);
             playerHitBox.alpha = 0;
@@ -62,12 +65,12 @@ namespace GXPEngine
         {
             if (Input.GetKeyDown(Key.W)) // w
             {
-                y -= 150;
+                y -= game.height / 3;
             }
 
             if (Input.GetKeyDown(Key.S)) // s
             {
-                y += 150;
+                y += game.height / 3;
             }
         }
 

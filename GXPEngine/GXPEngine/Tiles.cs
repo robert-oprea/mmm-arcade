@@ -15,7 +15,7 @@ namespace GXPEngine
 
         void Update()
         {
-            if (name == "Background")
+            if (name != "Collidable")
             {
                 _collider = null;
             }

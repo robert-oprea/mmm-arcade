@@ -67,6 +67,16 @@ namespace GXPEngine
         void Update()
         {
             Move();
+
+            CheckOffScreen();
+        }
+
+        void CheckOffScreen()
+        {
+            if (x < game.x || x > game.x + game.width || y < game.y || y > game.y + game.height)
+            {
+                LateDestroy();
+            }
         }
     }
 }

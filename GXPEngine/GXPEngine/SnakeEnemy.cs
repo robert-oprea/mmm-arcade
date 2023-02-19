@@ -66,7 +66,7 @@ namespace GXPEngine
 
             ChasePlayer();
 
-            this.alpha = 0.1f;
+            this.alpha = 0.2f;
 
             if (DistanceTo(target) < burrowEndRange || DistanceTo(target) > burrowStartRange)
             {

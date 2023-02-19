@@ -15,19 +15,29 @@ namespace GXPEngine
 
         Player player;
 
+        Random rnd = new Random();
+
         TiledObject exampleBombEnemy;
         TiledObject exampleSnakeEnemy;
         TiledObject exampleGhostEnemy;
         TiledObject gameManager;
 
-        float baseScrollSpeed;
-        float scrollSpeedIncrease;
-        float scrollSpeedIncreaseTimer;
-        float lastSpeedIncrease;
-        float maxScrollSpeed;
+        //scrolling the level
+        float baseScrollSpeed; //the scrolling speed
+        float scrollSpeedIncrease; //by how much the scrolling speed increases
+        float scrollSpeedIncreaseTimer; //how often the scrolling speed increases
+        float lastSpeedIncrease; //the last time the scrolling speed increased
+        float maxScrollSpeed; // the max speed at which the level can be scrolled
 
-        float lastSpawnedEnemy;
-        float enemySpawnTimer;
+        //spawning enemies
+        float enemySpawnTimer; //how often enemies spawn
+        float enemySpawnSpeedIncrease; //by how much their spawn speed increases
+        float enemySpawnSpeedIncreaseTimer; // how often their spawn speed increases
+        float lastSpawnedEnemy; //when the last enemy was spawned
+        float lastEnemySpawnSpeedIncrease; //when the last time the spawn speed increased
+        float maxEnemySpawnSpeed; //the maximum speed at which enemies can be spawned
+
+        int levelLength;
 
         public Level(string filename)
         {
@@ -61,9 +71,9 @@ namespace GXPEngine
                             tile.x = col * tile.width;
                             tile.y = row * tile.height;
 
-                            if (leveldata.Layers[i].Name == "Background") // makes all the tiles in the background layer have the name "Background" so you can check if its in the background
+                            if (leveldata.Layers[i].Name == "Collidable") // makes all the tiles in the background layer have the name "Background" so you can check if its in the background
                             {
-                                tile.name = "Background";
+                                tile.name = "Collidable";
                             }
 
                             AddChild(tile);
@@ -136,10 +146,15 @@ namespace GXPEngine
                         gameManager = obj;
                         baseScrollSpeed = gameManager.GetFloatProperty("baseScrollSpeed", 1.0f);
                         scrollSpeedIncrease = gameManager.GetFloatProperty("scrollSpeedIncrease", 0.1f);
-                        scrollSpeedIncreaseTimer = gameManager.GetFloatProperty("scrollSpeedIncreaseTimer", 1000f);
+                        scrollSpeedIncreaseTimer = gameManager.GetFloatProperty("scrollSpeedIncreaseTimer", 1f) * 1000;
                         maxScrollSpeed = gameManager.GetFloatProperty("maxScrollSpeed", 100f);
 
-                        enemySpawnTimer = gameManager.GetFloatProperty("enemySpawnTimer", 1000f);
+                        enemySpawnTimer = gameManager.GetFloatProperty("enemySpawnTimer", 1f) * 1000;
+                        enemySpawnSpeedIncrease = gameManager.GetFloatProperty("enemySpawnSpeedIncrease", 100f) * 1000;
+                        enemySpawnSpeedIncreaseTimer = gameManager.GetFloatProperty("enemySpawnSpeedIncreaseTimer", 1f) * 1000;
+                        maxEnemySpawnSpeed = gameManager.GetFloatProperty("maxEnemySpawnSpeed", 1f) * 1000;
+
+                        levelLength = gameManager.GetIntProperty("levelLength", 16);
                         break;
                 }
             }
@@ -162,7 +177,7 @@ namespace GXPEngine
 
                     if (child.x + 64 < x)
                     {
-                        child.x += game.width * 1.5f;
+                        child.x += levelLength * 32;
                     }
                 }
 
@@ -190,7 +205,7 @@ namespace GXPEngine
             {
                 Enemy enemy;
 
-                switch (new Random().Next(1, 4))
+                switch (rnd.Next(1, 4))
                 {
                     case 1: enemy = new BombEnemy(exampleBombEnemy);
                         break;
@@ -202,14 +217,20 @@ namespace GXPEngine
                         break;
                 }
 
-                enemy.x = 960;
-                enemy.y = new Random().Next(48, 464);
+                enemy.x = 960; 
+                enemy.y = rnd.Next(48, 464);
 
                 enemy.SetTarget(player);
 
                 AddChild(enemy);
 
                 lastSpawnedEnemy = Time.time;
+
+                if (Time.time > lastEnemySpawnSpeedIncrease + enemySpawnSpeedIncreaseTimer && enemySpawnTimer > maxEnemySpawnSpeed)
+                {
+                    enemySpawnTimer -= enemySpawnSpeedIncrease;
+                    lastEnemySpawnSpeedIncrease = Time.time;
+                }
             }
         }
     }

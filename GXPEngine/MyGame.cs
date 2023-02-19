@@ -9,7 +9,7 @@ public class MyGame : Game
     private string levelname = "Levels/Placeholder.tmx";
 
 
-    public MyGame() : base(640, 512, false, false, 960, 768, true)
+    public MyGame() : base(800, 600, false, false, 800, 600, true)
     {
         LoadLevel(levelname);
     }

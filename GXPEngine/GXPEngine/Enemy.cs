@@ -139,7 +139,7 @@ namespace GXPEngine
                 Move(-speedX, -speedY);
             }
 
-            if (collider is Bullet)
+            if (collider is Bullet && state != State.BURROWING)
             {
                 collider.LateDestroy();
                 LateDestroy();

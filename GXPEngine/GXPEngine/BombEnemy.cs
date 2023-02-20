@@ -91,7 +91,7 @@ namespace GXPEngine
                 if (collisions[i] is Enemy)
                 {
                     Enemy enemy = collisions[i] as Enemy;
-                    enemy.LateDestroy();
+                    enemy.EnemyTakeDamage();
                 }
             }
 

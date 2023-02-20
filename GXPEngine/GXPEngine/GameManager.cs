@@ -22,7 +22,7 @@ namespace GXPEngine
         float maxScrollSpeed; // the max speed at which the level can be scrolled
 
         //spawning enemies
-        float enemySpawnTimer; //how often enemies spawn
+        float baseEnemySpawnSpeed; //how often enemies spawn
         float enemySpawnSpeedIncrease; //by how much their spawn speed increases
         float enemySpawnSpeedIncreaseTimer; // how often their spawn speed increases
         float lastSpawnedEnemy; //when the last enemy was spawned
@@ -48,7 +48,7 @@ namespace GXPEngine
             scrollSpeedIncreaseTimer = obj.GetFloatProperty("scrollSpeedIncreaseTimer", 1f) * 1000;
             maxScrollSpeed = obj.GetFloatProperty("maxScrollSpeed", 100f);
 
-            enemySpawnTimer = obj.GetFloatProperty("enemySpawnTimer", 1f) * 1000;
+            baseEnemySpawnSpeed = obj.GetFloatProperty("baseEnemySpawnSpeed", 1f) * 1000;
             enemySpawnSpeedIncrease = obj.GetFloatProperty("enemySpawnSpeedIncrease", 100f) * 1000;
             enemySpawnSpeedIncreaseTimer = obj.GetFloatProperty("enemySpawnSpeedIncreaseTimer", 1f) * 1000;
             maxEnemySpawnSpeed = obj.GetFloatProperty("maxEnemySpawnSpeed", 1f) * 1000;
@@ -102,7 +102,7 @@ namespace GXPEngine
 
         void SpawnEnemy()
         {
-            if (Time.time > lastSpawnedEnemy + enemySpawnTimer)
+            if (Time.time > lastSpawnedEnemy + baseEnemySpawnSpeed)
             {
                 int randomIndex = rnd.Next(0, enemyTemplates.Count);
                 TiledObject randomTemplate = enemyTemplates[randomIndex];
@@ -136,9 +136,9 @@ namespace GXPEngine
                 lastSpawnedEnemy = Time.time;
             }
 
-            if (Time.time > lastEnemySpawnSpeedIncrease + enemySpawnSpeedIncreaseTimer && enemySpawnTimer > maxEnemySpawnSpeed)
+            if (Time.time > lastEnemySpawnSpeedIncrease + enemySpawnSpeedIncreaseTimer && baseEnemySpawnSpeed > maxEnemySpawnSpeed)
             {
-                enemySpawnTimer -= enemySpawnSpeedIncrease;
+                baseEnemySpawnSpeed -= enemySpawnSpeedIncrease;
                 lastEnemySpawnSpeedIncrease = Time.time;
             }
         }

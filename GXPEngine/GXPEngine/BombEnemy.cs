@@ -10,8 +10,10 @@ namespace GXPEngine
     {
         float explosionRadius;
         float explosionTriggerRange;
+        float explosionTime;
 
         bool exploded;
+        bool hasHitPlayer;
 
         Sprite explosionHitbox;
 
@@ -48,7 +50,7 @@ namespace GXPEngine
         {
             base.HandleChasingState();
 
-            if (DistanceTo(target) < explosionTriggerRange)
+            if (x < explosionTriggerRange)
             {
                 SetState(State.EXPLODING);
             }
@@ -68,22 +70,58 @@ namespace GXPEngine
                 explosionHitbox.height = (int)explosionRadius;
                 AddChild(explosionHitbox);
 
-                GameObject[] collisions = explosionHitbox.GetCollisions();
-                for (int i = 0; i < collisions.Length; i++)
-                {
-                    if (collisions[i].parent is Player)
-                    {
-                        //do smth
-                        target.TakeDamage();
-                    }
-                }
-
                 exploded = true;
+
+                explosionTime = Time.time;
 
                 _collider = null;
             }
 
-            //LateDestroy() after animation plays
+            GameObject[] collisions = explosionHitbox.GetCollisions();
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                if (collisions[i].parent is Player && hasHitPlayer == false)
+                {
+                    //do smth
+                    target.TakeDamage();
+
+                    hasHitPlayer = true;
+                }
+
+                if (collisions[i] is Enemy)
+                {
+                    Enemy enemy = collisions[i] as Enemy;
+                    enemy.LateDestroy();
+                }
+            }
+
+            //LateDestroy() after animation plays. no anim yet
+            if (Time.time > explosionTime + 1000)
+            {
+                LateDestroy();
+            }
+        }
+
+        public override void EnemyTakeDamage()
+        {
+            SetState(State.EXPLODING);
+        }
+
+        protected override void OnCollision(GameObject collider)
+        {
+            // this checks for collisions with tiles
+            if (collider is Tiles)
+            {
+                //do smth
+                Move(-speedX, -speedY);
+            }
+
+            if (collider is Bullet)
+            {
+                collider.LateDestroy();
+
+                EnemyTakeDamage();
+            }
         }
     }
 }

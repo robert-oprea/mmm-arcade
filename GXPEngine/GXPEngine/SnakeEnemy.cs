@@ -73,5 +73,21 @@ namespace GXPEngine
                 SetState(State.CHASING);
             }
         }
+
+        protected override void OnCollision(GameObject collider)
+        {
+            // this checks for collisions with tiles
+            if (collider is Tiles)
+            {
+                //do smth
+                Move(-speedX, -speedY);
+            }
+
+            if (collider is Bullet && state != State.BURROWING)
+            {
+                collider.LateDestroy();
+                EnemyTakeDamage();
+            }
+        }
     }
 }

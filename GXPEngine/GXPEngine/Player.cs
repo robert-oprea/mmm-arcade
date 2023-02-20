@@ -8,13 +8,15 @@ namespace GXPEngine
 {
     public class Player : AnimationSprite //Playerclass with very basic movement and basic collisions
     {
-        float bulletSpeed;
-
         int health;
         int maxHealth;
 
-        float invincibilityFrames = 1000.0f;
+        float bulletSpeed;
+        float invincibilityFrames;
         float lastDamageTaken;
+
+        float shootCD = 100.0f;
+        float lastShotFired;
 
         Sprite playerHitBox;
 
@@ -55,6 +57,8 @@ namespace GXPEngine
             health = obj.GetIntProperty("health", 3);
             invincibilityFrames = obj.GetFloatProperty("invincibilityFrames", 500.0f);
             bulletSpeed = obj.GetFloatProperty("bulletSpeed", 5.0f);
+
+            shootCD = obj.GetFloatProperty("shootCD", 100.0f);
 
             maxHealth = health;
 
@@ -117,12 +121,14 @@ namespace GXPEngine
         void Shoot()
         {
             //do the thing
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && Time.time > lastShotFired + shootCD)
             {
                 Bullet bullet = new Bullet(Input.mouseX, Input.mouseY, bulletSpeed, playerHitBox);
                 bullet.SetXY(x, y);
 
                 parent.AddChild(bullet);
+
+                lastShotFired = Time.time;
             }
         }
     }

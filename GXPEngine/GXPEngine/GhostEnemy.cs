@@ -12,5 +12,14 @@ namespace GXPEngine
         {
             Initialize(obj);
         }
+
+        protected override void OnCollision(GameObject collider)
+        {
+            if (collider is Bullet)
+            {
+                collider.LateDestroy();
+                EnemyTakeDamage();
+            }
+        }
     }
 }

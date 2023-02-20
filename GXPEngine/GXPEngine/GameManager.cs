@@ -10,9 +10,7 @@ namespace GXPEngine
     {
         Random rnd = new Random();
 
-        TiledObject exampleBombEnemy;
-        TiledObject exampleSnakeEnemy;
-        TiledObject exampleGhostEnemy;
+        List<TiledObject> enemyTemplates = new List<TiledObject>();
 
         Player player;
 
@@ -33,13 +31,12 @@ namespace GXPEngine
 
         int levelLength;
 
-        public GameManager(TiledObject obj, TiledObject pExampleGhostEnemy, TiledObject pExampleBombEnemy, TiledObject pExampleSnakeEnemy, Player pPlayer) : base("square.png", 1, 1, -1, false, false)
+        public GameManager(TiledObject pGameManagerObj, List<TiledObject> enemies, Player pPlayer) : base("square.png", 1, 1, -1, false, false)
         {
-            Initialize(obj);
+            Initialize(pGameManagerObj);
 
-            exampleGhostEnemy = pExampleGhostEnemy;
-            exampleBombEnemy = pExampleBombEnemy;
-            exampleSnakeEnemy = pExampleSnakeEnemy;
+            enemyTemplates = enemies;
+
             player = pPlayer;
             
         }
@@ -79,7 +76,7 @@ namespace GXPEngine
                 {
                     child.x -= baseScrollSpeed;
 
-                    if (child.x + 64 < x)
+                    if (child.x + 32 < x)
                     {
                         child.x += levelLength * 32;
                     }
@@ -107,21 +104,25 @@ namespace GXPEngine
         {
             if (Time.time > lastSpawnedEnemy + enemySpawnTimer)
             {
+                int randomIndex = rnd.Next(0, enemyTemplates.Count);
+                TiledObject randomTemplate = enemyTemplates[randomIndex];
+
                 Enemy enemy;
 
-                switch (rnd.Next(1, 4))
+                switch (randomTemplate.Name)
                 {
-                    case 1:
-                        enemy = new BombEnemy(exampleBombEnemy);
+                    case "ExampleBombEnemy":
+                        enemy = new BombEnemy(randomTemplate);
                         break;
-                    case 2:
-                        enemy = new GhostEnemy(exampleGhostEnemy);
+                    case "ExampleGhostEnemy":
+                        enemy = new GhostEnemy(randomTemplate);
                         break;
-                    case 3:
-                        enemy = new SnakeEnemy(exampleSnakeEnemy);
+                    case "ExampleSnakeEnemy":
+                        enemy = new SnakeEnemy(randomTemplate);
                         break;
                     default:
-                        enemy = new BombEnemy(exampleBombEnemy);
+                        // if the template name doesn't match any known type, use the default
+                        enemy = new GhostEnemy(enemyTemplates[0]);
                         break;
                 }
 
@@ -133,12 +134,12 @@ namespace GXPEngine
                 parent.AddChild(enemy);
 
                 lastSpawnedEnemy = Time.time;
+            }
 
-                if (Time.time > lastEnemySpawnSpeedIncrease + enemySpawnSpeedIncreaseTimer && enemySpawnTimer > maxEnemySpawnSpeed)
-                {
-                    enemySpawnTimer -= enemySpawnSpeedIncrease;
-                    lastEnemySpawnSpeedIncrease = Time.time;
-                }
+            if (Time.time > lastEnemySpawnSpeedIncrease + enemySpawnSpeedIncreaseTimer && enemySpawnTimer > maxEnemySpawnSpeed)
+            {
+                enemySpawnTimer -= enemySpawnSpeedIncrease;
+                lastEnemySpawnSpeedIncrease = Time.time;
             }
         }
     }

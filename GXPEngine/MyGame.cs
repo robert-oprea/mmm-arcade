@@ -35,7 +35,7 @@ public class MyGame : Game
 
         AddChild(new Level(name));
         
-        if (name != "Menu.tmx" && name != "Credits.tmx")
+        if (name == "Levels/Placeholder.tmx")
         {
             AddChild(new HUD());
         }

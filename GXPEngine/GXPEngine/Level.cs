@@ -15,9 +15,7 @@ namespace GXPEngine
 
         Player player;
 
-        TiledObject exampleBombEnemy;
-        TiledObject exampleSnakeEnemy;
-        TiledObject exampleGhostEnemy;
+        List<TiledObject> enemyTemplates = new List<TiledObject>();
 
         TiledObject gameManagerObj;
         GameManager gameManager;
@@ -91,19 +89,19 @@ namespace GXPEngine
 
                     case "ExampleBombEnemy": // if the objects Name is equal to ExampleBombEnemy it creates the template bomb enemy
 
-                        exampleBombEnemy = obj;
+                        enemyTemplates.Add(obj);
 
                         break;
 
                     case "ExampleSnakeEnemy": // if the objects Name is equal to ExampleSnakeEnemy it creates the template snake enemy
 
-                        exampleSnakeEnemy = obj;
+                        enemyTemplates.Add(obj);
 
                         break;
 
                     case "ExampleGhostEnemy": // if the objects Name is equal to ExampleGhostEnemy it creates the template ghost enemy
 
-                        exampleGhostEnemy = obj;
+                        enemyTemplates.Add(obj);
 
                         break;
 
@@ -120,7 +118,7 @@ namespace GXPEngine
         {
             if (player != null && gameManager == null)
             {
-                gameManager = new GameManager(gameManagerObj, exampleGhostEnemy, exampleBombEnemy, exampleSnakeEnemy, player);
+                gameManager = new GameManager(gameManagerObj, enemyTemplates, player);
 
                 AddChild(gameManager);
             }

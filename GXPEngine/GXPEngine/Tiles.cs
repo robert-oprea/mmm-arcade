@@ -10,12 +10,12 @@ namespace GXPEngine
     {
         public Tiles(string sprite, int colm, int row) : base(sprite, colm, row)
         {
-
+            
         }
 
         void Update()
         {
-            if (name != "Collidable")
+            if (name != "Collidable" && _collider != null)
             {
                 _collider = null;
             }

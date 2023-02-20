@@ -10,9 +10,10 @@ namespace GXPEngine
     {
         protected float speed;
         protected float triggerRange;
+        protected float health;
 
-        float speedX;
-        float speedY;
+        protected float speedX;
+        protected float speedY;
         //Pog state machine
         protected enum State
         {
@@ -37,6 +38,7 @@ namespace GXPEngine
 
             triggerRange = obj.GetFloatProperty("triggerRange", 200.0f);
             speed = obj.GetFloatProperty("speed", 1f);
+            health = obj.GetIntProperty("health", 1);
         }
 
         protected void Update()
@@ -129,6 +131,15 @@ namespace GXPEngine
             this.target = target;
         }
 
+        public virtual void EnemyTakeDamage()
+        {
+            health -= 1;
+            if (health < 1)
+            {
+                LateDestroy();
+            }
+        }
+
         protected virtual void OnCollision(GameObject collider)
         {
             // this checks for collisions with tiles
@@ -138,10 +149,10 @@ namespace GXPEngine
                 Move(-speedX, -speedY);
             }
 
-            if (collider is Bullet && state != State.BURROWING)
+            if (collider is Bullet)
             {
                 collider.LateDestroy();
-                LateDestroy();
+                EnemyTakeDamage();
             }
         }
     }

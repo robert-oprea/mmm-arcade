@@ -28,8 +28,6 @@ namespace GXPEngine
             startY = owner.parent.y;
 
             bulletSpeed = pBulletSpeed;
-
-            //Console.WriteLine("Start x: {0}; Start y: {1}, Target x: {2}; Target y: {3};", startX, startY, targetX, targetY);
         }
 
         void Move()

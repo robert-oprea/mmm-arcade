@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using TiledMapParser;
+using GXPEngine.Core;
 
 namespace GXPEngine
 {
@@ -14,6 +16,12 @@ namespace GXPEngine
 
         protected float speedX;
         protected float speedY;
+
+        float knockBackAngle;
+        float knockBackStartTime;
+        protected float knockBackSpeed;
+        protected float knockBackDuration;
+
         //Pog state machine
         protected enum State
         {
@@ -21,6 +29,7 @@ namespace GXPEngine
             CHASING,
             EXPLODING,
             BURROWING,
+            KNOCKBACKED,
         }
 
         protected Player target;
@@ -38,6 +47,8 @@ namespace GXPEngine
 
             triggerRange = obj.GetFloatProperty("triggerRange", 200.0f);
             speed = obj.GetFloatProperty("speed", 1f);
+            knockBackDuration = obj.GetFloatProperty("knockBackDuration", 1.0f) * 1000;
+            knockBackSpeed = obj.GetFloatProperty("knockBackSpeed", 4.0f);
             health = obj.GetIntProperty("health", 1);
         }
 
@@ -59,6 +70,23 @@ namespace GXPEngine
                 case State.CHASING:
                     HandleChasingState();
                     break;
+                case State.KNOCKBACKED:
+                    HandleKnockbackedState();
+                    break;
+            }
+        }
+
+        protected virtual void HandleKnockbackedState()
+        {
+            float vx = (float)Math.Cos(knockBackAngle) * knockBackSpeed;
+            float vy = (float)Math.Sin(knockBackAngle) * knockBackSpeed;
+
+            x += vx;
+            y += vy;
+
+            if (Time.time > knockBackStartTime + knockBackDuration)
+            {
+                SetState(State.IDLE);
             }
         }
 
@@ -134,10 +162,20 @@ namespace GXPEngine
         public virtual void EnemyTakeDamage()
         {
             health -= 1;
+
             if (health < 1)
             {
                 LateDestroy();
             }
+        }
+
+        protected virtual void KnockBack(GameObject bullet)
+        {
+            knockBackAngle = Mathf.Atan2(bullet.y - y, bullet.x - x) - Mathf.PI;
+
+            knockBackStartTime = Time.time;
+
+            SetState(State.KNOCKBACKED);
         }
 
         protected virtual void OnCollision(GameObject collider)
@@ -151,6 +189,7 @@ namespace GXPEngine
 
             if (collider is Bullet)
             {
+                KnockBack(collider);
                 collider.LateDestroy();
                 EnemyTakeDamage();
             }

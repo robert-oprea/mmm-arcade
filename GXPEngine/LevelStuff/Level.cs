@@ -105,6 +105,12 @@ namespace GXPEngine
 
                         break;
 
+                    case "ExampleShieldEnemy":
+
+                        enemyTemplates.Add(obj);
+
+                        break;
+
                     case "GameManager":
 
                         gameManagerObj = obj;

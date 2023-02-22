@@ -140,6 +140,8 @@ namespace GXPEngine
 
         void HandleTakingDamageState()
         {
+            Playermove();
+
             if (Time.time > lastDamageTaken + invincibilityFrames)
             {
                 health -= 1;

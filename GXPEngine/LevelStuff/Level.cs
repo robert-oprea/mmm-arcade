@@ -8,7 +8,7 @@ namespace GXPEngine
 {
     class Level : GameObject
     {
-        private string Tileset = "Levels/TileSets/tileset.jpg"; // <---- Add your tileset image right here (there must be no dead space inbetween the tiles)
+        private string Tileset = "Levels/TileSets/tileset.png"; // <---- Add your tileset image right here (there must be no dead space inbetween the tiles)
 
         private int TilesetCollumbs;
         private int TilesetRows;

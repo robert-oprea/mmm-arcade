@@ -45,19 +45,25 @@ namespace GXPEngine
 
             GameObject[] collisions = GetCollisions();
 
-            foreach (GameObject col in collisions)
+            for (int i = 0; i < collisions.Length; i++)
             {
-                if (col != owner)
+                if (collisions[i] != owner)
                 {
-                    if (col.parent is Enemy && col.name != "circle.png")
+                    if (collisions[i].parent is Enemy && collisions[i].name != "circle.png")
                     {
-                        Console.WriteLine(col.name);
+                        Console.WriteLine(collisions[i].name);
                         LateDestroy();
                     }
 
-                    if (col is Tiles)
+                    if (collisions[i] is Tiles)
                     {
                         LateDestroy();
+                    }
+
+                    if (collisions[i] is Powerup)
+                    {
+                        Powerup powerup = collisions[i] as Powerup;
+                        powerup.PickUp();
                     }
                 }
             }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="600" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="23">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="600" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="25">
  <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32" tilecount="84" columns="7">
   <image source="TileSets/tileset.JPG" width="224" height="384"/>
  </tileset>
@@ -134,6 +134,7 @@
     <property name="levelLength" type="int" value="2"/>
     <property name="maxEnemySpawnSpeed" type="float" value="0.5"/>
     <property name="maxScrollSpeed" type="float" value="100"/>
+    <property name="powerupSpawnSpeed" type="float" value="5"/>
     <property name="scrollSpeedIncrease" type="float" value="0.1"/>
     <property name="scrollSpeedIncreaseTimer" type="float" value="1.5"/>
    </properties>
@@ -142,8 +143,9 @@
    <properties>
     <property name="bulletSpeed" type="float" value="7"/>
     <property name="health" type="int" value="3"/>
-    <property name="invincibilityFrames" type="float" value="500"/>
-    <property name="shootCD" type="float" value="400"/>
+    <property name="invincibilityFrames" type="float" value="0.5"/>
+    <property name="shootCD" type="float" value="0.3"/>
+    <property name="staggerDuration" type="float" value="200"/>
    </properties>
   </object>
   <object id="22" name="ExampleShieldEnemy" class="Enemy" x="32" y="864" width="32" height="32">
@@ -155,6 +157,12 @@
     <property name="speed" type="float" value="0.5"/>
     <property name="speedWithoutShield" type="float" value="1.5"/>
     <property name="triggerRange" type="float" value="600"/>
+   </properties>
+  </object>
+  <object id="23" name="ExampleRapidFire" class="PowerUp" x="32" y="992" width="32" height="32">
+   <properties>
+    <property name="rapidFireDuration" type="float" value="5"/>
+    <property name="rapidFireShootCD" value="0.1"/>
    </properties>
   </object>
  </objectgroup>

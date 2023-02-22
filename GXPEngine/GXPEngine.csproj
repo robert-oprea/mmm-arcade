@@ -88,5 +88,7 @@
     <Compile Include="GXPEngine\FMOD\FMODSoundSystem.cs" />
     <Compile Include="GXPEngine\SoLoud\Soloud.cs" />
     <Compile Include="GXPEngine\SoLoud\SoloudSoundSystem.cs" />
+    <Compile Include="PowerUps\Powerup.cs" />
+    <Compile Include="PowerUps\RapidFire.cs" />
   </ItemGroup>
 </Project>

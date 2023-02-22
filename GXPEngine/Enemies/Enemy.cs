@@ -22,6 +22,8 @@ namespace GXPEngine
         protected float knockBackSpeed;
         protected float knockBackDuration;
 
+        float flashTimer;
+        bool isRed;
         //Pog state machine
         protected enum State
         {
@@ -76,7 +78,7 @@ namespace GXPEngine
             }
         }
 
-        protected virtual void HandleKnockbackedState()
+        protected void HandleKnockbackedState()
         {
             float vx = (float)Math.Cos(knockBackAngle) * knockBackSpeed;
             float vy = (float)Math.Sin(knockBackAngle) * knockBackSpeed;
@@ -84,8 +86,30 @@ namespace GXPEngine
             x += vx;
             y += vy;
 
+            flashTimer -= 1;
+
+            if (flashTimer <= 1f)
+            {
+                flashTimer = 25.0f; // reset the timer
+
+                // alternate between SetColor(1.0f, 0, 0) and SetColor(1.0f, 1, 0f, 1, 0f)
+                if (isRed)
+                {
+                    SetColor(1.0f, 1.0f, 1.0f);
+
+                }
+                else
+                {
+                    SetColor(1.0f, 0, 0);
+                }
+
+                isRed = !isRed; // toggle the flag for the next time
+            }
+
             if (Time.time > knockBackStartTime + knockBackDuration)
             {
+                SetColor(1.0f, 1.0f, 1.0f);
+
                 SetState(State.IDLE);
             }
         }
@@ -169,7 +193,7 @@ namespace GXPEngine
             }
         }
 
-        protected virtual void KnockBack(GameObject bullet)
+        protected void KnockBack(GameObject bullet)
         {
             knockBackAngle = Mathf.Atan2(bullet.y - y, bullet.x - x) - Mathf.PI;
 

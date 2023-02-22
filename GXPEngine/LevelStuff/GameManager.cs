@@ -12,6 +12,8 @@ class GameManager : AnimationSprite
 
     List<TiledObject> enemyTemplates = new List<TiledObject>();
 
+    List<TiledObject> powerUpTemplates = new List<TiledObject>();
+
     Player player;
 
     //scrolling the level
@@ -29,13 +31,19 @@ class GameManager : AnimationSprite
     float lastEnemySpawnSpeedIncrease; //when the last time the spawn speed increased
     float maxEnemySpawnSpeed; //the maximum speed at which enemies can be spawned
 
+    //spawning powerups
+    float powerupSpawnSpeed = 100;
+    float lastSpawnedPowerup;
+
     int levelLength;
 
-    public GameManager(TiledObject pGameManagerObj, List<TiledObject> enemies, Player pPlayer) : base("square.png", 1, 1, -1, false, false)
+    public GameManager(TiledObject pGameManagerObj, List<TiledObject> enemies, List<TiledObject> powertUps, Player pPlayer) : base("square.png", 1, 1, -1, false, false)
     {
         Initialize(pGameManagerObj);
 
         enemyTemplates = enemies;
+
+        powerUpTemplates = powertUps;
 
         player = pPlayer;
 
@@ -53,6 +61,8 @@ class GameManager : AnimationSprite
         enemySpawnSpeedIncreaseTimer = obj.GetFloatProperty("enemySpawnSpeedIncreaseTimer", 1f) * 1000;
         maxEnemySpawnSpeed = obj.GetFloatProperty("maxEnemySpawnSpeed", 1f) * 1000;
 
+        powerupSpawnSpeed = obj.GetFloatProperty("powerupSpawnSpeed", 1f) * 1000;
+
         levelLength = obj.GetIntProperty("levelLength", 16) * 32;
 
         alpha = 0;
@@ -65,6 +75,8 @@ class GameManager : AnimationSprite
             ScrollLevel();
 
             SpawnEnemy();
+
+            SpawnPowerup();
         }
     }
 
@@ -82,7 +94,7 @@ class GameManager : AnimationSprite
                 }
             }
 
-            if (child is Enemy)
+            if (child is Enemy || child is Powerup)
             {
                 child.x -= baseScrollSpeed;
 
@@ -97,6 +109,38 @@ class GameManager : AnimationSprite
         {
             baseScrollSpeed += scrollSpeedIncrease;
             lastSpeedIncrease = Time.time;
+        }
+    }
+
+    void SpawnPowerup()
+    {
+        if (Time.time > lastSpawnedPowerup + powerupSpawnSpeed)
+        {
+            int randomIndex = rnd.Next(0, powerUpTemplates.Count);
+            TiledObject randomTemplate = powerUpTemplates[randomIndex];
+
+            Powerup powerUp;
+            switch (randomTemplate.Name)
+            {
+                case "ExampleRapidFire":
+
+                    powerUp = new RapidFire(randomTemplate);
+                    
+                    break;
+
+                default:
+
+                    powerUp = new RapidFire(powerUpTemplates[0]);
+
+                    break;
+            }
+
+            powerUp.x = game.width * 1.2f;
+            powerUp.y = rnd.Next(48, 464);
+
+            parent.AddChild(powerUp);
+
+            lastSpawnedPowerup = Time.time;
         }
     }
 
@@ -129,7 +173,7 @@ class GameManager : AnimationSprite
                     break;
             }
 
-            enemy.x = 460;
+            enemy.x = game.width * 1.2f;
             enemy.y = rnd.Next(48, 464);
 
             enemy.SetTarget(player);

@@ -17,6 +17,8 @@ namespace GXPEngine
 
         List<TiledObject> enemyTemplates = new List<TiledObject>();
 
+        List<TiledObject> powerUpTemplates = new List<TiledObject>();
+
         TiledObject gameManagerObj;
         GameManager gameManager;
 
@@ -111,6 +113,12 @@ namespace GXPEngine
 
                         break;
 
+                    case "ExampleRapidFire":
+
+                        powerUpTemplates.Add(obj);
+
+                        break;
+
                     case "GameManager":
 
                         gameManagerObj = obj;
@@ -124,7 +132,7 @@ namespace GXPEngine
         {
             if (player != null && gameManager == null)
             {
-                gameManager = new GameManager(gameManagerObj, enemyTemplates, player);
+                gameManager = new GameManager(gameManagerObj, enemyTemplates, powerUpTemplates, player);
 
                 AddChild(gameManager);
             }

@@ -16,12 +16,40 @@ namespace GXPEngine
         float lastDamageTaken;
 
         float shootCD = 100.0f;
+        float normalShootCD;
         float lastShotFired;
+
+        float staggerStart;
+        float staggerDuration;
+
+        bool rapidFireOn;
+        public float rapidFireDuration;
+        public float rapidFireShootCD;
 
         Sprite playerHitBox;
 
         HUD hud;
 
+        public enum PlayerState
+        {   
+            NORMAL,
+            STAGGERED,
+            TAKINGDAMAGE,
+            PICKUPRAPIDFIRE,
+            PICKUPHEALTH,
+            PICKUPINVINCIBILITY,
+        }
+
+        enum ActionState
+        {
+            SHOOTING, 
+            SHIELDING,
+        }
+
+        PlayerState state;
+
+        ActionState actionState;
+        
         public Player(string Sprite, int columns, int rows, TiledObject obj) : base(Sprite, columns, rows)
         {
             Initialize(obj);
@@ -34,11 +62,136 @@ namespace GXPEngine
                 hud = game.FindObjectOfType<HUD>();
             }
 
+            HandleCollisions();
+
+            HandleState();
+        }
+
+        void HandleState()
+        {
+            switch (state)
+            {
+                case PlayerState.NORMAL:
+                    HandleNormalState();
+                    break;
+                case PlayerState.STAGGERED:
+                    HandleStaggeredState();
+                    break;
+                case PlayerState.TAKINGDAMAGE:
+                    HandleTakingDamageState();
+                    break;
+                case PlayerState.PICKUPRAPIDFIRE:
+                    HandlePickupRapidFireState();
+                    break;
+                case PlayerState.PICKUPHEALTH:
+                    HandlePickupHealthState();
+                    break;
+                case PlayerState.PICKUPINVINCIBILITY:
+                    HandlePickupInvincibilityState();
+                    break;
+            }
+
+            switch (actionState)
+            {
+                case ActionState.SHOOTING:
+                    HandleShootingState();
+                    break;
+                case ActionState.SHIELDING:
+                    HandleShieldingState();
+                    break;
+            }
+        }
+
+        void HandleNormalState()
+        {
+            Playermove();
+        }
+
+        void HandleShootingState()
+        {
             Shoot();
 
-            Playermove();
+            if (Input.GetKeyDown(Key.R))
+            {
+                SetActionState(ActionState.SHIELDING);
+            }
+        }
 
-            HandleCollisions();
+        void HandleShieldingState()
+        {
+            if (Input.GetMouseButtonDown(0) && Time.time > lastShotFired + shootCD)
+            {
+                Console.WriteLine("Shielding");
+            }
+
+            if (Input.GetKeyDown(Key.R))
+            {
+                SetActionState(ActionState.SHOOTING);
+            }
+        }
+
+        void HandleStaggeredState()
+        {
+            if (Time.time > staggerStart + staggerDuration)
+            {
+                SetState(PlayerState.NORMAL);
+            }
+        }
+
+        void HandleTakingDamageState()
+        {
+            if (Time.time > lastDamageTaken + invincibilityFrames)
+            {
+                health -= 1;
+                lastDamageTaken = Time.time;
+                Console.WriteLine("damage taken");
+            }
+
+            if (health <= 0)
+            {
+                ((MyGame)game).LoadLevel("Levels/Placeholder.tmx");
+            }
+
+            HandleHud();
+
+            SetState(PlayerState.NORMAL);
+        }
+
+        void HandlePickupRapidFireState()
+        {
+            // TODO: Implement the behavior for the Pickup Rapid Fire state
+            rapidFireOn = true;
+
+            SetState(PlayerState.NORMAL);
+        }
+
+        void HandlePickupHealthState()
+        {
+            // TODO: Implement the behavior for the Pickup Health state
+            SetState(PlayerState.NORMAL);
+        }
+
+        void HandlePickupInvincibilityState()
+        {
+            // TODO: Implement the behavior for the Pickup Invincibility state
+            SetState(PlayerState.NORMAL);
+        }
+
+
+        public void SetState(PlayerState newState)
+        {
+            if (state != newState)
+            {
+                state = newState;
+            }
+        }
+
+        void SetActionState(ActionState newState)
+        {
+            if (actionState != newState)
+            {
+                actionState = newState;
+            }
         }
 
         void Initialize(TiledObject obj)
@@ -55,10 +208,13 @@ namespace GXPEngine
             AddChild(playerHitBox);
 
             health = obj.GetIntProperty("health", 3);
-            invincibilityFrames = obj.GetFloatProperty("invincibilityFrames", 500.0f);
+            invincibilityFrames = obj.GetFloatProperty("invincibilityFrames", 0.5f) * 1000;
             bulletSpeed = obj.GetFloatProperty("bulletSpeed", 5.0f);
 
-            shootCD = obj.GetFloatProperty("shootCD", 100.0f);
+            shootCD = obj.GetFloatProperty("shootCD", 0.2f) * 1000;
+            normalShootCD = shootCD;
+
+            staggerDuration = obj.GetFloatProperty("staggerDuration", 100.0f);
 
             maxHealth = health;
 
@@ -67,32 +223,24 @@ namespace GXPEngine
 
         void Playermove() // controls of the player
         {
-            if (Input.GetKeyDown(Key.W)) // w
+            if (Input.GetKeyDown(Key.W) && y - game.height / 3 > 0) // w
             {
                 y -= game.height / 3;
+                staggerStart = Time.time;
+                SetState(PlayerState.STAGGERED);
             }
 
-            if (Input.GetKeyDown(Key.S)) // s
+            if (Input.GetKeyDown(Key.S) && y + game.height / 3 < game.height) // s
             {
                 y += game.height / 3;
+                staggerStart = Time.time;
+                SetState(PlayerState.STAGGERED);
             }
         }
 
         public void TakeDamage()
         {
-            if (Time.time > lastDamageTaken + invincibilityFrames)
-            {
-                health -= 1;
-                lastDamageTaken = Time.time;
-                Console.WriteLine("damage taken");
-            }
-
-            if (health <= 0)
-            {
-                ((MyGame)game).LoadLevel("Levels/Placeholder.tmx");
-            }
-
-            HandleHud();
+            SetState(PlayerState.TAKINGDAMAGE);
         }
 
         void HandleHud()
@@ -121,6 +269,19 @@ namespace GXPEngine
         void Shoot()
         {
             //do the thing
+            if (rapidFireOn)
+            {
+                shootCD = rapidFireShootCD;
+
+                rapidFireDuration -= 1;
+
+                if (rapidFireDuration < 0)
+                {
+                    rapidFireOn = false;
+                    shootCD = normalShootCD;
+                }
+            }
+
             if (Input.GetMouseButtonDown(0) && Time.time > lastShotFired + shootCD)
             {
                 Bullet bullet = new Bullet(Input.mouseX, Input.mouseY, bulletSpeed, playerHitBox);

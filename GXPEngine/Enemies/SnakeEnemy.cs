@@ -13,7 +13,7 @@ class SnakeEnemy : Enemy
     float burrowSpeed;
     float normalSpeed;
 
-    public SnakeEnemy(TiledObject obj) : base("snakeEnemy.png", 1, 1, obj)
+    public SnakeEnemy(TiledObject obj) : base("snakesprite.png", 4, 2, obj)
     {
         Initialize(obj);
     }
@@ -47,13 +47,20 @@ class SnakeEnemy : Enemy
         }
     }
 
+    protected override void HandleIdleState()
+    {
+        base.HandleIdleState();
+
+        SetCycle(4, 7);
+    }
+
     protected override void HandleChasingState()
     {
         base.HandleChasingState();
 
-        speed = normalSpeed;
+        SetCycle(4, 7);
 
-        this.alpha = 1.0f;
+        speed = normalSpeed;
 
         if (DistanceTo(target) < burrowStartRange && DistanceTo(target) > burrowEndRange)
         {
@@ -64,12 +71,11 @@ class SnakeEnemy : Enemy
     void HandleBurrowingState()
     {
         //burrowing anim
+        SetCycle(0, 3);
 
         speed = burrowSpeed;
 
         ChasePlayer();
-
-        this.alpha = 0.2f;
 
         if (DistanceTo(target) < burrowEndRange || DistanceTo(target) > burrowStartRange)
         {
@@ -90,7 +96,6 @@ class SnakeEnemy : Enemy
         {
             KnockBack(collider);
             collider.LateDestroy();
-            EnemyTakeDamage();
         }
     }
 }

@@ -84,7 +84,7 @@ namespace GXPEngine
                 switch (obj.Name)
                 {
                     case "Player": // if the objects Name is equal to Player it creates a player
-                        player = new Player("cart.png", 1, 1, obj);
+                        player = new Player("player_sprites.png", 4, 4, obj);
 
                         AddChild(player);
                         break;
@@ -112,8 +112,26 @@ namespace GXPEngine
                         enemyTemplates.Add(obj);
 
                         break;
+                    
+                    case "ExampleBatEnemy":
+
+                        enemyTemplates.Add(obj);
+
+                        break;
 
                     case "ExampleRapidFire":
+
+                        powerUpTemplates.Add(obj);
+
+                        break;
+
+                    case "ExampleHealthPot":
+                        
+                        powerUpTemplates.Add(obj);
+
+                        break;
+
+                    case "ExampleInvincibility":
 
                         powerUpTemplates.Add(obj);
 

@@ -8,19 +8,32 @@ using GXPEngine;
 
 class GhostEnemy : Enemy
 {
-    public GhostEnemy(TiledObject obj) : base("ghostEnemy.png", 1, 1, obj)
+    public GhostEnemy(TiledObject obj) : base("ghosprite.png", 4, 2, obj)
     {
         Initialize(obj);
     }
 
     protected override void OnCollision(GameObject collider)
     {
-        if (collider is Bullet)
+        if (collider is Bullet && state != State.KNOCKBACKED)
         {
             KnockBack(collider);
             collider.LateDestroy();
-            EnemyTakeDamage();
         }
+    }
+
+    protected override void HandleIdleState()
+    {
+        SetCycle(0, 3);
+
+        base.HandleIdleState();
+    }
+
+    protected override void HandleChasingState()
+    {
+        SetCycle(4, 7);
+
+        base.HandleChasingState();
     }
 }
 

@@ -17,8 +17,9 @@ class BombEnemy : Enemy
     bool hasHitPlayer;
 
     Sprite explosionHitbox;
+    ExplosionAnimation explosionAnimation;
 
-    public BombEnemy(TiledObject obj) : base("bombEnemy.png", 1, 1, obj)
+    public BombEnemy(TiledObject obj) : base("bombsprite.png", 8, 1, obj)
     {
         Initialize(obj);
     }
@@ -51,6 +52,13 @@ class BombEnemy : Enemy
         }
     }
 
+    protected override void HandleIdleState()
+    {
+        SetCycle(0, 3);
+
+        base.HandleIdleState();
+    }
+
     protected override void HandleChasingState()
     {
         base.HandleChasingState();
@@ -65,15 +73,23 @@ class BombEnemy : Enemy
     {
         //explosion anim
 
-        if (exploded == false)
+        SetCycle(4, 7);
+
+        if (exploded == false && currentFrame == 7)
         {
             //this is just the hitbox, alpha should == 0 when we have an animation
             explosionHitbox = new Sprite("circle.png");
-            explosionHitbox.SetOrigin(explosionHitbox.width / 2, explosionHitbox.height / 2 - 5);
-            explosionHitbox.alpha = 1;
+            explosionHitbox.SetOrigin(explosionHitbox.width / 2, explosionHitbox.height / 2);
+            explosionHitbox.alpha = 0;
             explosionHitbox.width = explosionRadius;
             explosionHitbox.height = explosionRadius;
             AddChild(explosionHitbox);
+
+            explosionAnimation = new ExplosionAnimation();
+            explosionAnimation.SetOrigin(explosionAnimation.width / 2, explosionAnimation.height / 2);
+            explosionAnimation.width = explosionRadius;
+            explosionAnimation.height = explosionRadius;
+            AddChild(explosionAnimation);
 
             exploded = true;
 
@@ -82,28 +98,30 @@ class BombEnemy : Enemy
             _collider = null;
         }
 
-        GameObject[] collisions = explosionHitbox.GetCollisions();
-        for (int i = 0; i < collisions.Length; i++)
+        if (exploded == true)
         {
-            if (collisions[i].parent is Player && hasHitPlayer == false)
+            GameObject[] collisions = explosionHitbox.GetCollisions();
+            for (int i = 0; i < collisions.Length; i++)
             {
-                //do smth
-                target.TakeDamage();
+                if (collisions[i].parent is Player && hasHitPlayer == false)
+                {
+                    //do smth
+                    target.TakeDamage();
 
-                hasHitPlayer = true;
+                    hasHitPlayer = true;
+                }
+
+                if (collisions[i] is Enemy)
+                {
+                    Enemy enemy = collisions[i] as Enemy;
+                    enemy.EnemyTakeDamage();
+                }
             }
 
-            if (collisions[i] is Enemy)
+            if (Time.time > explosionTime + explosionDuration)
             {
-                Enemy enemy = collisions[i] as Enemy;
-                enemy.EnemyTakeDamage();
+                LateDestroy();
             }
-        }
-
-        //LateDestroy() after animation plays. no anim yet
-        if (Time.time > explosionTime + explosionDuration)
-        {
-            LateDestroy();
         }
     }
 
@@ -126,13 +144,11 @@ class BombEnemy : Enemy
             Move(-speedX, -speedY);
         }
 
-        if (collider is Bullet)
+        if (collider is Bullet && state != State.KNOCKBACKED && state != State.EXPLODING)
         {
             KnockBack(collider);
 
             collider.LateDestroy();
-
-            EnemyTakeDamage();
         }
     }
 }

@@ -36,10 +36,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enemies\BatEnemy.cs" />
     <Compile Include="GXPEngine\AddOns\Gizmos.cs" />
     <Compile Include="GXPEngine\AddOns\SpriteBatch.cs" />
     <Compile Include="GXPEngine\AddOns\TiledLoader.cs" />
     <Compile Include="Enemies\BombEnemy.cs" />
+    <Compile Include="PlayerStuff\CrossHair.cs" />
+    <Compile Include="PlayerStuff\ExplosionAnimation.cs" />
+    <Compile Include="PowerUps\Invincibility.cs" />
+    <Compile Include="PowerUps\HealthPot.cs" />
     <Compile Include="PlayerStuff\Bullet.cs" />
     <Compile Include="Enemies\Enemy.cs" />
     <Compile Include="LevelStuff\GameManager.cs" />

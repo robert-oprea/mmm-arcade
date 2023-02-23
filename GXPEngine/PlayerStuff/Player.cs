@@ -6,27 +6,36 @@ using TiledMapParser;
 
 namespace GXPEngine
 {
-    public class Player : AnimationSprite //Playerclass with very basic movement and basic collisions
+    public class Player : AnimationSprite 
     {
-        int health;
+        public int health;
         int maxHealth;
 
         float bulletSpeed;
         float invincibilityFrames;
         float lastDamageTaken;
 
-        float shootCD = 100.0f;
+        float shootCD;
         float normalShootCD;
         float lastShotFired;
 
         float staggerStart;
         float staggerDuration;
 
+        float shieldCD;
+        float internalShieldCD;
+
         bool rapidFireOn;
         public float rapidFireDuration;
         public float rapidFireShootCD;
 
+        public float invincibilityDuration;
+        float invincibilityTime;
+        bool invincible;
+
         Sprite playerHitBox;
+        
+        CrossHair crossHair;
 
         HUD hud;
 
@@ -62,9 +71,43 @@ namespace GXPEngine
                 hud = game.FindObjectOfType<HUD>();
             }
 
+            if (parent != null && crossHair == null)
+            {
+                crossHair = new CrossHair();
+                crossHair.SetOrigin(playerHitBox.width / 2, playerHitBox.height / 2);
+                parent.AddChild(crossHair);
+            }
+
+
+            HandleAnimation();
+
             HandleCollisions();
 
             HandleState();
+        }
+
+        void HandleAnimation()
+        {
+            Animate(0.1f);
+
+            float directionX = crossHair.x - x;
+            float directionY = crossHair.y - y;
+
+            float angle = (float)Math.Atan2(directionY, directionX);
+
+            switch (actionState)
+            {
+                case ActionState.SHOOTING:
+                    int[] shootCycles = { 6, 5, 4, 3, 2, 1, 0, 7, 6 };
+                    int shootCycleIndex = (int)Math.Round(angle / 0.75) + 4;
+                    SetCycle(shootCycles[shootCycleIndex]);
+                    break;
+                case ActionState.SHIELDING:
+                    int[] blockCycles = { 14, 13, 12, 11, 10, 9, 8, 15, 14 };
+                    int blockCycleIndex = (int)Math.Round(angle / 0.75) + 4;
+                    SetCycle(blockCycles[blockCycleIndex]);
+                    break;
+            }
         }
 
         void HandleState()
@@ -105,13 +148,23 @@ namespace GXPEngine
         void HandleNormalState()
         {
             Playermove();
+
+            if (Time.time > invincibilityTime + invincibilityDuration)
+            {
+                invincible = false;
+            }
         }
 
         void HandleShootingState()
         {
             Shoot();
 
-            if (Input.GetKeyDown(Key.R))
+            if (internalShieldCD > 0)
+            {
+                internalShieldCD -= 1;
+            }
+
+            if (Input.GetKeyDown(Key.R) && internalShieldCD <= 0)
             {
                 SetActionState(ActionState.SHIELDING);
             }
@@ -119,11 +172,6 @@ namespace GXPEngine
 
         void HandleShieldingState()
         {
-            if (Input.GetMouseButtonDown(0) && Time.time > lastShotFired + shootCD)
-            {
-                Console.WriteLine("Shielding");
-            }
-
             if (Input.GetKeyDown(Key.R))
             {
                 SetActionState(ActionState.SHOOTING);
@@ -142,11 +190,17 @@ namespace GXPEngine
         {
             Playermove();
 
-            if (Time.time > lastDamageTaken + invincibilityFrames)
+            if (Time.time > lastDamageTaken + invincibilityFrames && actionState != ActionState.SHIELDING)
             {
                 health -= 1;
                 lastDamageTaken = Time.time;
                 Console.WriteLine("damage taken");
+            } 
+            else if (actionState == ActionState.SHIELDING)
+            {
+                SetActionState(ActionState.SHOOTING);
+
+                internalShieldCD = shieldCD;
             }
 
             if (health <= 0)
@@ -170,15 +224,26 @@ namespace GXPEngine
         void HandlePickupHealthState()
         {
             // TODO: Implement the behavior for the Pickup Health state
+            if (health > maxHealth)
+            {
+                health = maxHealth;
+            }
+
+            Console.WriteLine(health);
+
+            HandleHud();
+
             SetState(PlayerState.NORMAL);
         }
 
         void HandlePickupInvincibilityState()
         {
             // TODO: Implement the behavior for the Pickup Invincibility state
+            invincibilityTime = Time.time;
+            invincible = true;
+
             SetState(PlayerState.NORMAL);
         }
-
 
         public void SetState(PlayerState newState)
         {
@@ -204,7 +269,7 @@ namespace GXPEngine
             y = game.height / 2;
 
             playerHitBox = new Sprite("square.png");
-            playerHitBox.SetOrigin(playerHitBox.width / 2, playerHitBox.height / 2 - 5);
+            playerHitBox.SetOrigin(playerHitBox.width / 2, playerHitBox.height / 2);
             playerHitBox.alpha = 0;
             playerHitBox.scale = 1f;
             AddChild(playerHitBox);
@@ -215,6 +280,8 @@ namespace GXPEngine
 
             shootCD = obj.GetFloatProperty("shootCD", 0.2f) * 1000;
             normalShootCD = shootCD;
+
+            shieldCD = obj.GetFloatProperty("shieldCD", 1.0f) * 100;
 
             staggerDuration = obj.GetFloatProperty("staggerDuration", 100.0f);
 
@@ -242,7 +309,10 @@ namespace GXPEngine
 
         public void TakeDamage()
         {
-            SetState(PlayerState.TAKINGDAMAGE);
+            if (invincible == false)
+            {
+                SetState(PlayerState.TAKINGDAMAGE);
+            }
         }
 
         void HandleHud()
@@ -286,7 +356,7 @@ namespace GXPEngine
 
             if (Input.GetMouseButtonDown(0) && Time.time > lastShotFired + shootCD)
             {
-                Bullet bullet = new Bullet(Input.mouseX, Input.mouseY, bulletSpeed, playerHitBox);
+                Bullet bullet = new Bullet(crossHair.x, crossHair.y, bulletSpeed, playerHitBox);
                 bullet.SetXY(x, y);
 
                 parent.AddChild(bullet);

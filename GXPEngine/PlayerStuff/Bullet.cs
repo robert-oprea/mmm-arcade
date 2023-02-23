@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GXPEngine
 {
-    class Bullet : Sprite
+    class Bullet : AnimationSprite
     {
         float targetX;
         float targetY;
@@ -16,11 +16,13 @@ namespace GXPEngine
 
         float bulletSpeed;
 
-        public Bullet(float pTargetX, float pTargetY, float pBulletSpeed, GameObject pOwner) : base("Dust Particle.png")
+        public Bullet(float pTargetX, float pTargetY, float pBulletSpeed, GameObject pOwner) : base("bullet.png", 3, 1)
         {
             SetOrigin(width / 2, height / 2);
             targetX = pTargetX;
             targetY = pTargetY;
+
+            scale = 1.5f;
 
             owner = pOwner;
 
@@ -37,6 +39,10 @@ namespace GXPEngine
 
             float angle = (float)Math.Atan2(directionY, directionX);
 
+            float angleInDegrees = angle * (180 / (float)Math.PI);
+
+            rotation = angleInDegrees + 45;
+
             float vx = (float)Math.Cos(angle) * bulletSpeed;
             float vy = (float)Math.Sin(angle) * bulletSpeed;
 
@@ -49,12 +55,6 @@ namespace GXPEngine
             {
                 if (collisions[i] != owner)
                 {
-                    if (collisions[i].parent is Enemy && collisions[i].name != "circle.png")
-                    {
-                        Console.WriteLine(collisions[i].name);
-                        LateDestroy();
-                    }
-
                     if (collisions[i] is Tiles)
                     {
                         LateDestroy();
@@ -74,6 +74,8 @@ namespace GXPEngine
             Move();
 
             CheckOffScreen();
+
+            Animate(0.1f);
         }
 
         void CheckOffScreen()

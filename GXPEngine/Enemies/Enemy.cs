@@ -60,6 +60,8 @@ namespace GXPEngine
             {
                 HandleState();
             }
+
+            Animate(0.1f);
         }
 
         protected virtual void HandleState()
@@ -110,7 +112,13 @@ namespace GXPEngine
             {
                 SetColor(1.0f, 1.0f, 1.0f);
 
+                flashTimer = 0;
+
+                isRed = false;
+
                 SetState(State.IDLE);
+
+                EnemyTakeDamage();
             }
         }
 
@@ -211,11 +219,10 @@ namespace GXPEngine
                 Move(-speedX, -speedY);
             }
 
-            if (collider is Bullet)
+            if (collider is Bullet && state != State.KNOCKBACKED)
             {
                 KnockBack(collider);
                 collider.LateDestroy();
-                EnemyTakeDamage();
             }
         }
     }

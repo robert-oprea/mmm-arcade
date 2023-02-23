@@ -26,6 +26,8 @@ namespace GXPEngine
         {
             Console.WriteLine("Pickup grabbed");
 
+            _collider = null;
+
             LateDestroy();
         }
 

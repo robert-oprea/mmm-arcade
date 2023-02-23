@@ -125,7 +125,19 @@ class GameManager : AnimationSprite
                 case "ExampleRapidFire":
 
                     powerUp = new RapidFire(randomTemplate);
-                    
+
+                    break;
+
+                case "ExampleHealthPot":
+
+                    powerUp = new HealthPot(randomTemplate);
+
+                    break;
+
+                case "ExampleInvincibility":
+
+                    powerUp = new Invincibility(randomTemplate);
+
                     break;
 
                 default:
@@ -166,6 +178,9 @@ class GameManager : AnimationSprite
                     break;
                 case "ExampleShieldEnemy":
                     enemy = new ShieldEnemy(randomTemplate);
+                    break;
+                case "ExampleBatEnemy":
+                    enemy = new BatEnemy(randomTemplate);
                     break;
                 default:
                     // if the template name doesn't match any known type, use the default

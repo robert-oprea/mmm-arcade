@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="600" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="31">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="600" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="34">
  <tileset firstgid="1" source="TileSets/tileset.tsx"/>
  <layer id="1" name="Background" width="600" height="40">
   <data encoding="csv">
@@ -92,12 +92,12 @@
  <objectgroup id="2" name="Object Layer 1">
   <object id="4" name="ExampleBombEnemy" class="Enemy" x="32" y="736" width="32" height="32">
    <properties>
-    <property name="explosionDuration" type="float" value="0.2"/>
+    <property name="explosionDuration" type="float" value="0.4"/>
     <property name="explosionRadius" type="int" value="250"/>
     <property name="explosionTriggerRange" type="float" value="200"/>
     <property name="health" type="int" value="1"/>
-    <property name="knockBackDuration" type="float" value="1"/>
-    <property name="knockBackSpeed" type="float" value="2"/>
+    <property name="knockBackDuration" type="float" value="0.2"/>
+    <property name="knockBackSpeed" type="float" value="4"/>
     <property name="speed" type="float" value="1"/>
     <property name="triggerRange" type="float" value="600"/>
    </properties>
@@ -106,10 +106,10 @@
    <properties>
     <property name="burrowEndRange" type="float" value="150"/>
     <property name="burrowSpeed" type="float" value="0.3"/>
-    <property name="burrowStartRange" type="float" value="150"/>
+    <property name="burrowStartRange" type="float" value="250"/>
     <property name="health" type="int" value="1"/>
-    <property name="knockBackDuration" type="float" value="1"/>
-    <property name="knockBackSpeed" type="float" value="2"/>
+    <property name="knockBackDuration" type="float" value="0.2"/>
+    <property name="knockBackSpeed" type="float" value="4"/>
     <property name="speed" type="float" value="1"/>
     <property name="triggerRange" type="float" value="600"/>
    </properties>
@@ -117,8 +117,8 @@
   <object id="8" name="ExampleGhostEnemy" class="Enemy" x="672" y="736" width="32" height="32">
    <properties>
     <property name="health" type="int" value="1"/>
-    <property name="knockBackDuration" type="float" value="1"/>
-    <property name="knockBackSpeed" type="float" value="2"/>
+    <property name="knockBackDuration" type="float" value="0.2"/>
+    <property name="knockBackSpeed" type="float" value="4"/>
     <property name="speed" type="float" value="2"/>
     <property name="triggerRange" type="float" value="600"/>
    </properties>
@@ -142,15 +142,16 @@
     <property name="bulletSpeed" type="float" value="7"/>
     <property name="health" type="int" value="3"/>
     <property name="invincibilityFrames" type="float" value="0.5"/>
-    <property name="shootCD" type="float" value="0.3"/>
+    <property name="shieldCD" type="float" value="2"/>
+    <property name="shootCD" type="float" value="0.5"/>
     <property name="staggerDuration" type="float" value="200"/>
    </properties>
   </object>
   <object id="22" name="ExampleShieldEnemy" class="Enemy" x="32" y="864" width="32" height="32">
    <properties>
     <property name="health" type="int" value="1"/>
-    <property name="knockBackDuration" type="float" value="1"/>
-    <property name="knockBackSpeed" type="float" value="2"/>
+    <property name="knockBackDuration" type="float" value="0.2"/>
+    <property name="knockBackSpeed" type="float" value="4"/>
     <property name="shieldHealth" type="int" value="1"/>
     <property name="speed" type="float" value="0.5"/>
     <property name="speedWithoutShield" type="float" value="1.5"/>
@@ -161,6 +162,25 @@
    <properties>
     <property name="rapidFireDuration" type="float" value="5"/>
     <property name="rapidFireShootCD" value="0.1"/>
+   </properties>
+  </object>
+  <object id="31" name="ExampleHealthPot" class="PowerUp" x="352" y="992" width="32" height="32">
+   <properties>
+    <property name="healAmount" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="32" name="ExampleInvincibility" class="PowerUp" x="672" y="992" width="32" height="32">
+   <properties>
+    <property name="invincibilityDuration" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="33" name="ExampleBatEnemy" class="Enemy" x="352" y="864" width="32" height="32">
+   <properties>
+    <property name="health" type="int" value="1"/>
+    <property name="knockBackDuration" type="float" value="0.2"/>
+    <property name="knockBackSpeed" type="float" value="4"/>
+    <property name="speed" type="float" value="2"/>
+    <property name="triggerRange" type="float" value="600"/>
    </properties>
   </object>
  </objectgroup>

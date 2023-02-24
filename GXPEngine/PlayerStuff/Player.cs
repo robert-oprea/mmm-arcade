@@ -11,6 +11,9 @@ namespace GXPEngine
         public int health;
         int maxHealth;
 
+        float damageFlashDuration = 400;
+        float damageFlashTime;
+
         float bulletSpeed;
         float invincibilityFrames;
         float lastDamageTaken;
@@ -32,6 +35,9 @@ namespace GXPEngine
         public float invincibilityDuration;
         float invincibilityTime;
         bool invincible;
+
+        int score;
+        float lastScoreIncrease;
 
         Sprite playerHitBox;
         
@@ -78,6 +84,13 @@ namespace GXPEngine
                 parent.AddChild(crossHair);
             }
 
+            if (Time.time > lastScoreIncrease + 25)
+            {
+                score += 3;
+                lastScoreIncrease = Time.time;
+            }
+
+            HandleHud();
 
             HandleAnimation();
 
@@ -88,6 +101,15 @@ namespace GXPEngine
 
         void HandleAnimation()
         {
+            if (Time.time < damageFlashTime + damageFlashDuration)
+            {
+                SetColor(255, 0, 0);
+            }
+            else
+            {
+                SetColor(255, 255, 255);
+            }
+
             Animate(0.1f);
 
             float directionX = crossHair.x - x;
@@ -189,7 +211,7 @@ namespace GXPEngine
         void HandleTakingDamageState()
         {
             Playermove();
-
+            damageFlashTime = Time.time;
             if (Time.time > lastDamageTaken + invincibilityFrames && actionState != ActionState.SHIELDING)
             {
                 health -= 1;
@@ -205,10 +227,8 @@ namespace GXPEngine
 
             if (health <= 0)
             {
-                ((MyGame)game).LoadLevel("Levels/Placeholder.tmx");
+                ((MyGame)game).LoadLevel("Levels/Start Menu.tmx");
             }
-
-            HandleHud();
 
             SetState(PlayerState.NORMAL);
         }
@@ -230,8 +250,6 @@ namespace GXPEngine
             }
 
             Console.WriteLine(health);
-
-            HandleHud();
 
             SetState(PlayerState.NORMAL);
         }
@@ -317,7 +335,9 @@ namespace GXPEngine
 
         void HandleHud()
         {
-            hud.SetHealth((float)health / maxHealth);
+            hud.SetHealth(health);
+
+            hud.SetScore(score);
         }
 
         void HandleCollisions()

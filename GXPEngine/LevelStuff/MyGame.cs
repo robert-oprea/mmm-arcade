@@ -6,7 +6,7 @@ public class MyGame : Game
 {
 
 
-    private string levelname = "Levels/Placeholder.tmx";
+    private string levelname = "Levels/Start Menu.tmx";
 
 
     public MyGame() : base(800, 600, false, false, 800, 600, true)
@@ -34,10 +34,7 @@ public class MyGame : Game
 
         AddChild(new Level(name));
         
-        if (name == "Levels/Placeholder.tmx")
-        {
-            AddChild(new HUD());
-        }
+        AddChild(new HUD());
     }
 
 }

@@ -41,6 +41,7 @@
     <Compile Include="GXPEngine\AddOns\SpriteBatch.cs" />
     <Compile Include="GXPEngine\AddOns\TiledLoader.cs" />
     <Compile Include="Enemies\BombEnemy.cs" />
+    <Compile Include="LevelStuff\startScreen.cs" />
     <Compile Include="PlayerStuff\CrossHair.cs" />
     <Compile Include="PlayerStuff\ExplosionAnimation.cs" />
     <Compile Include="PowerUps\Invincibility.cs" />

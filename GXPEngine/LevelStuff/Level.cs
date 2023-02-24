@@ -22,10 +22,12 @@ namespace GXPEngine
         TiledObject gameManagerObj;
         GameManager gameManager;
 
+        string levelName;
+
         public Level(string filename)
         {
             Map leveldata = MapParser.ReadMap(filename);
-
+            levelName = filename;
             Sprite Tilesets = new Sprite(Tileset, false, false); // creates a sprite object to get the width and height of the total tileset
             TilesetRows = Tilesets.width / leveldata.TileWidth; // devides the width of the tilesets total width by that of the tiles
             TilesetCollumbs = Tilesets.height / leveldata.TileHeight; // ^ but for height
@@ -70,7 +72,6 @@ namespace GXPEngine
 
         void SpawnObjects(Map leveldata) // checks for objects and their location
         {
-
             if (leveldata.ObjectGroups == null || leveldata.ObjectGroups.Length == 0)
                 return;
 
@@ -142,13 +143,21 @@ namespace GXPEngine
                         gameManagerObj = obj;
 
                         break;
+
+                    case "pressStart":
+
+                        startScreen startScreen = new startScreen(obj);
+
+                        AddChild(startScreen);
+                        
+                        break;
                 }
             }
         }
 
         void Update()
         {
-            if (player != null && gameManager == null)
+            if (player != null && gameManager == null && levelName == "Levels/Placeholder.tmx")
             {
                 gameManager = new GameManager(gameManagerObj, enemyTemplates, powerUpTemplates, player);
 

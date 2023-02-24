@@ -55,11 +55,6 @@ namespace GXPEngine
             {
                 if (collisions[i] != owner)
                 {
-                    if (collisions[i] is Tiles)
-                    {
-                        LateDestroy();
-                    }
-
                     if (collisions[i] is Powerup)
                     {
                         Powerup powerup = collisions[i] as Powerup;

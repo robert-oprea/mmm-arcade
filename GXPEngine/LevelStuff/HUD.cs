@@ -23,6 +23,12 @@ namespace GXPEngine
 
         Sprite mainMenu;
 
+        AnimationSprite rapidFire;
+
+        AnimationSprite healthPot;
+
+        AnimationSprite invincibility;
+
         bool isVisible;
 
         public HUD()
@@ -41,11 +47,51 @@ namespace GXPEngine
             start.Text("");
             start.SetXY(135, 500);
             AddChild(start);
+
+            healthPot = new AnimationSprite("healthPot.png", 1, 1);
+            healthPot.SetXY(700, 500);
+            healthPot.scale = 1.7f;
+
+            invincibility = new AnimationSprite("invincibility.png", 1, 1);
+            invincibility.SetXY(700, 500);
+            invincibility.scale = 1.7f;
+
+            rapidFire = new AnimationSprite("rapid_fire.png", 1, 1);
+            rapidFire.SetXY(700, 500);
+            rapidFire.scale = 1.7f;
         }
 
         public void SetScore(int points)
         {
             score.Text(String.Format("{0:D8}", points), true);
+        }
+        List<Sprite> powerUps = new List<Sprite>();
+        public void displayPowerUP(String powerUpName)
+        {
+            if (powerUps != null)
+            {
+                foreach (Sprite powerUp in powerUps)
+                {
+                    RemoveChild(powerUp);
+                }
+                powerUps.Clear();
+            }
+
+            if (powerUpName == "rapidFire")
+            {
+                AddChild(rapidFire);
+                powerUps.Add(rapidFire);
+            }
+            if (powerUpName == "healthPot")
+            {
+                AddChild(healthPot);
+                powerUps.Add(healthPot);
+            }
+            if (powerUpName == "invincibility")
+            {
+                AddChild(invincibility);
+                powerUps.Add(invincibility);
+            }
         }
 
         public void showStartingScreen()

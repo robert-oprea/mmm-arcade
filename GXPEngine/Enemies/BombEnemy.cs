@@ -19,6 +19,8 @@ class BombEnemy : Enemy
     Sprite explosionHitbox;
     ExplosionAnimation explosionAnimation;
 
+    SoundChannel explosion;
+
     public BombEnemy(TiledObject obj) : base("bombsprite.png", 8, 1, obj)
     {
         Initialize(obj);
@@ -100,6 +102,10 @@ class BombEnemy : Enemy
 
         if (exploded == true)
         {
+            if (explosion == null)
+            {
+                explosion = new Sound("Explosion2.mp3").Play();
+            }
             GameObject[] collisions = explosionHitbox.GetCollisions();
             for (int i = 0; i < collisions.Length; i++)
             {
@@ -138,11 +144,6 @@ class BombEnemy : Enemy
     protected override void OnCollision(GameObject collider)
     {
         // this checks for collisions with tiles
-        if (collider is Tiles)
-        {
-            //do smth
-            Move(-speedX, -speedY);
-        }
 
         if (collider is Bullet && state != State.KNOCKBACKED && state != State.EXPLODING)
         {

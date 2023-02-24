@@ -200,9 +200,13 @@ namespace GXPEngine
                 LateDestroy();
             }
         }
-
+        SoundChannel enemyHit;
         protected void KnockBack(GameObject bullet)
         {
+            if (enemyHit == null)
+            {
+                enemyHit = new Sound("Enemy hit.mp3").Play();
+            }
             knockBackAngle = Mathf.Atan2(bullet.y - y, bullet.x - x) - Mathf.PI;
 
             knockBackStartTime = Time.time;
@@ -212,13 +216,6 @@ namespace GXPEngine
 
         protected virtual void OnCollision(GameObject collider)
         {
-            // this checks for collisions with tiles
-            if (collider is Tiles)
-            {
-                //do smth
-                Move(-speedX, -speedY);
-            }
-
             if (collider is Bullet && state != State.KNOCKBACKED)
             {
                 KnockBack(collider);

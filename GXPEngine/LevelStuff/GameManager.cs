@@ -148,7 +148,7 @@ class GameManager : AnimationSprite
             }
 
             powerUp.x = game.width * 1.2f;
-            powerUp.y = rnd.Next(48, 464);
+            powerUp.y = rnd.Next(160, 464);
 
             parent.AddChild(powerUp);
 
@@ -189,7 +189,7 @@ class GameManager : AnimationSprite
             }
 
             enemy.x = game.width * 1.2f;
-            enemy.y = rnd.Next(48, 464);
+            enemy.y = rnd.Next(160, 464);
 
             enemy.SetTarget(player);
 

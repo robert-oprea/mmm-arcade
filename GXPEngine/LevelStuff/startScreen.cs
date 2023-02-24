@@ -15,9 +15,13 @@ namespace GXPEngine
             alpha = 0;
             SetXY(obj.X, obj.Y);
         }
-
+        SoundChannel music;
         void Update()
         {
+            if (music == null)
+            {
+                music = new Sound("Menu music.mp3", true, true).Play();
+            }
             if (hud == null)
             {
                 hud = game.FindObjectOfType<HUD>();
@@ -30,6 +34,7 @@ namespace GXPEngine
 
             if (Input.AnyKeyDown())
             {
+                music.Stop();
                 ((MyGame)game).LoadLevel("Levels/Placeholder.tmx");
             }
         }

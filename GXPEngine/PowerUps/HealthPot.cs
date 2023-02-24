@@ -23,7 +23,6 @@ namespace GXPEngine
 
         public override void PickUp()
         {
-            player.health += healAmount;
             player.SetState(Player.PlayerState.PICKUPHEALTH);
             base.PickUp();
         }

@@ -26,6 +26,8 @@ namespace GXPEngine
         {
             Console.WriteLine("Pickup grabbed");
 
+            SoundChannel pickup = new Sound("Powerup.mp3").Play();
+
             _collider = null;
 
             LateDestroy();

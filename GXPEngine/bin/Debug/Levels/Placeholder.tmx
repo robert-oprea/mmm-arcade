@@ -181,7 +181,7 @@
   <object id="17" name="Player" x="64" y="320" width="32" height="32">
    <properties>
     <property name="bulletSpeed" type="float" value="7"/>
-    <property name="health" type="int" value="1"/>
+    <property name="health" type="int" value="3"/>
     <property name="invincibilityFrames" type="float" value="1.5"/>
     <property name="shootCD" type="float" value="0.5"/>
     <property name="staggerDuration" type="float" value="1"/>

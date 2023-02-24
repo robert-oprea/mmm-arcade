@@ -113,13 +113,13 @@ namespace GXPEngine
 
         public void endScreen()
         {
-            start.Text(String.Format("PRESS ANY KET TO CONTINUE"), true);
+            start.Text(String.Format("PRESS ANY KEY TO CONTINUE"), true);
             end.Text(String.Format("{0:D8}", Points), true);
         }
 
         public void showStartingScreen()
         {
-            start.Text(String.Format("PRESS ANY KET TO CONTINUE"), true);
+            start.Text(String.Format("PRESS ANY KEY TO CONTINUE"), true);
 
             if (mainMenu == null)
             {

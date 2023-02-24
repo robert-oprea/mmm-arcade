@@ -19,22 +19,22 @@ namespace GXPEngine
 
         void Update()
         {
-            if (Input.GetKey(Key.LEFT))
+            if (Input.GetKey(Key.O))
             {
                 x = x - moveSpeed;
             }
 
-            if (Input.GetKey(Key.RIGHT))
+            if (Input.GetKey(Key.P))
             {
                 x = x + moveSpeed;
             }
 
-            if (Input.GetKey(Key.UP))
+            if (Input.GetKey(Key.U))
             {
                 y = y - moveSpeed;
             }
 
-            if (Input.GetKey(Key.DOWN))
+            if (Input.GetKey(Key.I))
             {
                 y = y + moveSpeed;
             }

@@ -151,6 +151,13 @@ namespace GXPEngine
                         AddChild(startScreen);
                         
                         break;
+                    case "endScore":
+
+                        endScreen endScreen = new endScreen(obj);
+
+                        AddChild(endScreen);
+
+                        break;
                 }
             }
         }

@@ -76,10 +76,13 @@ namespace GXPEngine
         SoundChannel bgMusic;
         int scoreIncreaseAmount = 1;
         int scoreThreshold;
+
+        float moveStart;
+        float moveDuration = 550f;
         public void Update()
         {
             y += movementSpeed;
-            if (Time.time > staggerStart + staggerDuration)
+            if (Time.time > moveStart + moveDuration)
             {
                 movementSpeed = 0;
             }
@@ -217,7 +220,7 @@ namespace GXPEngine
                 internalShieldCD -= 1;
             }
 
-            if (Input.GetKeyDown(Key.R) && internalShieldCD <= 0)
+            if (Input.GetKeyDown(Key.N) && internalShieldCD <= 0)
             {
                 SetActionState(ActionState.SHIELDING);
             }
@@ -259,6 +262,7 @@ namespace GXPEngine
 
             if (health <= 0)
             {
+                hud.setPoints(score);
                 moving.Stop();
                 bgMusic.Stop();
                 ((MyGame)game).LoadLevel("Levels/Start Menu.tmx");
@@ -318,7 +322,7 @@ namespace GXPEngine
         
         void UsePowerUP()
         {
-            if (Input.GetKeyDown(Key.T))
+            if (Input.GetKeyDown(Key.B))
             {
                 if (currentPowerUp == "invincibility")
                 {
@@ -385,18 +389,20 @@ namespace GXPEngine
 
         void Playermove() // controls of the player
         {
-            if (Input.GetKeyDown(Key.W) && y - 96 > 120) // w
+            if (Input.GetKeyDown(Key.C) && y - 96 > 120) // w
             {
                 movementSpeed -= 5;
                 staggerStart = Time.time;
                 SetState(PlayerState.STAGGERED);
+                moveStart = Time.time;
             }
 
-            if (Input.GetKeyDown(Key.S) && y + 96 < 400) // s
+            if (Input.GetKeyDown(Key.V) && y + 96 < 600) // s
             {
                 movementSpeed += 5;
                 staggerStart = Time.time;
                 SetState(PlayerState.STAGGERED);
+                moveStart = Time.time;
             }
         }
 
@@ -451,7 +457,12 @@ namespace GXPEngine
                 }
             }
 
-            if (Input.GetMouseButtonDown(0) && Time.time > lastShotFired + shootCD)
+            if (Input.GetKey(Key.W))
+            {
+                TakeDamage();
+            }
+
+            if (Input.GetKeyDown(Key.M) && Time.time > lastShotFired + shootCD)
             {
                 Bullet bullet = new Bullet(crossHair.x, crossHair.y, bulletSpeed, playerHitBox);
                 bullet.SetXY(x, y);

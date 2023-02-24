@@ -8,12 +8,16 @@ namespace GXPEngine
 {
     class HUD : GameObject
     {
+        int Points;
+
         float flashingTimer = 1000;
         float lastFlash;
 
         List<Sprite> hearts = new List<Sprite>();
 
         Sprite heart;
+
+        EasyDraw end;
 
         EasyDraw score;
 
@@ -48,6 +52,13 @@ namespace GXPEngine
             start.SetXY(135, 500);
             AddChild(start);
 
+            end = new EasyDraw(600, 60, false);
+            end.TextFont(pixelFont);
+            end.TextAlign(CenterMode.Min, CenterMode.Center);
+            end.Text("");
+            end.SetXY(135, 300);
+            AddChild(end);
+
             healthPot = new AnimationSprite("healthPot.png", 1, 1);
             healthPot.SetXY(700, 500);
             healthPot.scale = 1.7f;
@@ -61,10 +72,16 @@ namespace GXPEngine
             rapidFire.scale = 1.7f;
         }
 
+        public void setPoints(int points)
+        {
+            Points = points;
+        }
+
         public void SetScore(int points)
         {
             score.Text(String.Format("{0:D8}", points), true);
         }
+
         List<Sprite> powerUps = new List<Sprite>();
         public void displayPowerUP(String powerUpName)
         {
@@ -92,6 +109,12 @@ namespace GXPEngine
                 AddChild(invincibility);
                 powerUps.Add(invincibility);
             }
+        }
+
+        public void endScreen()
+        {
+            start.Text(String.Format("PRESS ANY KET TO CONTINUE"), true);
+            end.Text(String.Format("{0:D8}", Points), true);
         }
 
         public void showStartingScreen()
